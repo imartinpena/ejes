@@ -1,0 +1,71 @@
+TEMA 3: VARIABLES ALEATORIAS
+
+# Sin el valor de la C
+
+knitr::opts_chunk$set(echo = TRUE)
+source("utils.R")
+
+f_unnormalized_xy = function(x, y) {
+  if (x > 0 & y > 0 & x < 10 & y < 10) {
+    exp(-y*x)
+  } else {
+    0
+  }
+}
+
+# Vectorizar
+f_unnormalized_xy = Vectorize(f_unnormalized_xy)
+
+# Integral doble x, y
+resultado_integral_xy = integrate2_dydx(
+  f_unnormalized_xy,
+  from_x = 0, to_x = 10,
+  from_y = function(x) 0, to_y = function(x) 10
+)
+
+print(resultado_integral_xy)
+
+# Valor de c
+c_value = 1 / resultado_integral_xy$value
+print(c_value)
+
+# F_xy 
+
+f_unnormalized_xy_vect = Vectorize(f_unnormalized_xy)
+
+f_xy_normalized <- function(x, y) {
+  c_value * f_unnormalized_xy_vect(x, y)
+}
+
+# Vectorizar la función normalizada
+f_xy_normalized_vect <- Vectorize(f_xy_normalized)
+
+# Función para integrar con respecto a y hasta un valor específico de y
+integrate_y_to <- function(x, y_limit) {
+  integrate(Vectorize(function(y) f_xy_normalized_vect(x, y)), -Inf, y_limit)$value
+}
+
+# Función de probabilidad acumulada conjunta F_xy
+F_xy <- function(x_limit, y_limit) {
+  integrate(Vectorize(function(x) integrate_y_to(x, y_limit)), -Inf, x_limit)$value
+}
+
+# Vectorizar F_xy
+F_xy_vect <- Vectorize(F_xy)
+
+# P(Y > X + 2)
+resultado_a = integrate2_dydx(
+  f_xy_normalized_vect,
+  from_x = 0,
+  to_x = Inf,
+  from_y = function(x) x + 2,
+  to_y = function(x) Inf
+)
+
+print(resultado_a)
+1 - resultado_a$value
+
+# Ejemplo: Calcular F_xy para un punto específico (x, y)
+F_xy_result <- F_xy_vect(2, 2)  # Cambiar (1, 2) por los valores deseados de (x, y)
+print(F_xy_result)
+1 - F_xy_result
