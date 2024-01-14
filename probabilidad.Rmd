@@ -1,3 +1,84 @@
+TEMA 2: PROBABILIDAD
+
+# pastilla azul y resfriados
+# Calcular P(B|A) y P(B|¬A) usando la distribución de Poisson
+p_B_given_A <- dpois(5, lambda = 2)
+p_B_given_not_A <- dpois(5, lambda = 4)
+
+# P(A) y P(¬A)
+p_A <- 0.75
+p_not_A <- 0.25
+
+# Calcular P(B)
+p_B <- p_B_given_A * p_A + p_B_given_not_A * p_not_A
+
+# Aplicar el Teorema de Bayes para encontrar P(A|B)
+p_A_given_B <- (p_B_given_A * p_A) / p_B
+
+p_A_given_B
+
+
+# Problemas de pacientes urgencias y hospitalizados
+numero_llegan_urgencias = rpois(25000, 50)
+numero_llegan_urgencias
+numero_ingresados = rbinom(25000,numero_llegan_urgencias, 0.25)
+numero_ingresados
+f = numero_ingresados > 25
+f
+sum(f)/length(f)
+
+# Simulaciones
+# Hay 20 personas que forman 2 grupos de 10 personas. Del total hay 8 personas mejores que las demas
+sim = replicate(5000, {
+  personas = rep(0,20)
+  mejores = sample(1:20,8)
+  personas[mejores] = 1
+  grupo_a = personas[1:10]
+  grupo_b = personas[11:20]
+  mejores_a = sum(grupo_a)
+  mejores_b = sum(grupo_b)
+  mejores_a >= 3 && mejores_b >=3
+})
+sim
+sum(sim)/length(sim)
+
+
+# P(Haya 8 buenas en el A | El A tiene 3 o más buenas) = P(Intersercción) / P(El A tiene 3 o más buenas)
+
+sim = replicate(25000, {
+  personas = rep(0,20)
+  mejores = sample(1:20,8)
+  personas[mejores] = 1
+  grupo_a = personas[1:10]
+  grupo_b = personas[11:20]
+  mejores_a = sum(grupo_a)
+  mejores_b = sum(grupo_b)
+  cond1 = (mejores_a == 8)
+  cond2 = (mejores_a >= 3)
+  c(cond1,cond2)
+})
+sim
+sum(sim[1, ]) / sum(sim[2, ])
+
+# Con una hypergeometrica
+
+buenos_a = rhyper(1000, 8, 12, 10)
+buenos_a
+cond1 = buenos_a >= 3 & buenos_a <=5
+sum(cond1) / length(cond3)
+
+# P(Haya 8 buenas en el A | El A tiene 3 o más buenas) = P(Intersercción) / P(El A tiene 3 o más buenas)
+
+buenos_a = rhyper(50000, 5, 12, 7)
+cond1 = (buenos_a == 5)
+cond2 = (buenos_a >=0)
+
+solución = cond1 & cond2
+sum(solución) / length(solución)
+
+
+
+
 TEMA 3: VARIABLES ALEATORIAS
 
 # Sin el valor de la C
@@ -30,7 +111,6 @@ c_value = 1 / resultado_integral_xy$value
 print(c_value)
 
 # F_xy 
-
 f_unnormalized_xy_vect = Vectorize(f_unnormalized_xy)
 
 f_xy_normalized <- function(x, y) {
@@ -69,3 +149,23 @@ print(resultado_a)
 F_xy_result <- F_xy_vect(2, 2)  # Cambiar (1, 2) por los valores deseados de (x, y)
 print(F_xy_result)
 1 - F_xy_result
+
+# DISTRIBUCIONES DISCRETAS:
+
+dbinom -> P(X = k)
+pbinom -> P(X <= k)
+rbinom(k, n, p)
+
+# Binomial: tiene un tope obvio, solo hay dos posibles resultados (exito y fracaso), se tira una moneda n veces, n: numero de ensayos, p: probabilidad de exito, k: valor por el que se pregunta.
+
+# Geometrica: X: "numero de cruces hasta la primera cara", se busca el primer exito, se cuentan el numero de fallos de X antes de obtener el primer exito, p(infraccion) = 0.01, X = numero de coches que pasan antes de la primera infraccion, P(X >= 30) = 1 - P(X < 30) = 1 - P(X <= 29) a = 1 - pgeom(29, 0.01)
+
+# Hipergeometrica: urna con bolas blancas y negras sin remplazamiento, X: n bolas blancas extraidas, m: bolas blancas, n: bolas negras, k: las que saco de golpe.
+
+# Binomial Negativa: se busca el exito numero r (5º exito). X: n cruces hasta obtener 5 caras. r: n de exitos que que queremos alcanzar, p: probabilidad de exito en un solo ensaño. nbinom("lo que nos preguntan", size = "n de exitos a alcanzar", prob= "prob de exito"
+
+# Multinomial: 
+
+
+
+
